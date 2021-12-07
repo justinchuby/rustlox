@@ -2,12 +2,17 @@ use std::io;
 use std::env;
 use std::process;
 
-struct Lox {}
+struct Lox {
+    had_error: bool,
+}
 
 impl Lox {
     fn run_file(&mut self, path: &str) {
         let content = std::fs::read_to_string(path).expect("File not found");
         run(&content);
+        if self.had_error {
+            process::exit(65);
+        }
     }
 
     fn run_prompt(&mut self) {
@@ -18,7 +23,10 @@ impl Lox {
                 Ok(n) => {
                     match n {
                         0 => { break; }
-                        _ => { run(line) }
+                        _ => {
+                            run(line);
+                            self.had_error = false;
+                        }
                     }
                 }
                 Err(error) => {
@@ -36,6 +44,15 @@ impl Lox {
         for token in tokens.iter() {
             println!(token)
         }
+    }
+
+    fn handle_error(&mut self, line: int, message: &str) {
+        report(line, "", message)
+    }
+
+    fn report(&mut self, line: int, location: &str, message: &str) {
+        eprintln!("[line {}] Error {}: {}", line, location, message);
+        self.had_error = true;
     }
 }
 
