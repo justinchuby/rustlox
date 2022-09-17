@@ -42,15 +42,15 @@ impl Lox {
         let tokens = scanner.scan_tokens();
 
         for token in tokens.iter() {
-            println!(token)
+            println!("{}", token)
         }
     }
 
-    fn handle_error(&mut self, line: int, message: &str) {
+    fn handle_error(&mut self, line: i32, message: &str) {
         report(line, "", message)
     }
 
-    fn report(&mut self, line: int, location: &str, message: &str) {
+    fn report(&mut self, line: i64, location: &str, message: &str) {
         eprintln!("[line {}] Error {}: {}", line, location, message);
         self.had_error = true;
     }
